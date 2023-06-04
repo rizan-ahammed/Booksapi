@@ -3,7 +3,8 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from django.db.models import Q
 from books.models import Category, Book
-from api.v1.books.serializers import  BookSerializer
+from api.v1.books.serializers import BookSerializer
+
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
@@ -13,7 +14,8 @@ def books(request):
     q = request.GET.get("q")
 
     if q:
-        instances = instances.filter(Q(name__icontains=q) | Q(publisher_name__icontains=q))
+        instances = instances.filter(
+            Q(name__icontains=q) | Q(publisher_name__icontains=q))
 
     context = {
         "request": request
@@ -74,7 +76,7 @@ def create(request):
 
 
 @api_view(['DELETE'])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def delete(request, pk):
     try:
         book = Book.objects.get(id=pk)
@@ -124,54 +126,54 @@ def delete(request, pk):
 #         return Response(response_data)
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def update(request,pk):
+def update(request, pk):
     if Book.objects.filter(pk=pk).exists():
-        instance=Book.objects.get(pk=pk)
-        print(instance,"==instance")
-        serializer=BookSerializer(instance=instance,data=request.data,partial=True)
+        instance = Book.objects.get(pk=pk)
+        print(instance, "==instance")
+        serializer = BookSerializer(
+            instance=instance, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
-            response_data={
-                'status':6000,
-                "message":"Book is updated successfully",
+            response_data = {
+                'status': 6000,
+                "message": "Book is updated successfully",
             }
             return Response(response_data)
     else:
-        response_data={
-            'status':6001,
-            "message":"Book does not exist"
+        response_data = {
+            'status': 6001,
+            "message": "Book does not exist"
 
         }
         return Response(response_data)
-
-
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def add_to_favorites(request, pk):
     if Book.objects.filter(pk=pk).exists():
-       instance=Book.objects.get(pk=pk)
-       instance.is_favourite=True
-       response_data={
-           "status_code":6000,
-           "message":"Added to favorites"
-       }
-       return Response(response_data)
+        instance = Book.objects.get(pk=pk)
+        instance.is_favourite = True
+        response_data = {
+            "status_code": 6000,
+            "message": "Added to favorites"
+        }
+        return Response(response_data)
     else:
-        response_data={
-            'status':6001,
-            "message":"Book does not exist"
+        response_data = {
+            'status': 6001,
+            "message": "Book does not exist"
 
         }
         return Response(response_data)
-              
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def view_favorites(request):
-    instance = Book.objects.filter(is_favourite=True).first()  # Get the first matching book
+    # Get the first matching book
+    instance = Book.objects.filter(is_favourite=True).first()
     if instance:
         serializer = BookSerializer(instance, many=True)
         response_data = {
