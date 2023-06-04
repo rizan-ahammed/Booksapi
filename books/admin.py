@@ -1,6 +1,10 @@
 from django.contrib import admin
-from books.models import Category, Book, Favorite
+from books.models import Category, Book
 
+
+class BookAdmin(admin.ModelAdmin):
+    list_display=("id", "title")
+
+    
+admin.site.register(Book,BookAdmin)
 admin.site.register(Category)
-admin.site.register(Book)
-admin.site.register(Favorite)

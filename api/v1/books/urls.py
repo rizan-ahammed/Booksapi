@@ -1,11 +1,13 @@
 from django.urls import path
-from api.v1.books import views
+from api.v1.books.views import books,bookssingle,add_to_favorites,create,update,delete,view_favorites
 
 urlpatterns = [
-    path('', views.books, name='books'),
-    path('<int:pk>/', views.bookssingle, name='bookssingle'),
-    path('<int:pk>/add-to-favorites/', views.add_to_favorites, name='add_to_favorites'),
-    path('create/', views.create, name='create'),
-    path('<int:pk>/update/', views.update, name='update'),
-    path('<int:pk>/delete/', views.delete, name='delete'),
+    path("",books ),
+    path('<int:pk>/',bookssingle),
+    path('create/',create),
+    path('<int:pk>/update/',update ),
+    path('<int:pk>/delete/',delete ),
+    path('<int:pk>/add-to-favorites/',add_to_favorites),
+    path('view-favorites/',view_favorites),
+
 ]
